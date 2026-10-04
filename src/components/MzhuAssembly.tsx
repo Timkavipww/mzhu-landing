@@ -669,7 +669,7 @@ export function MzhuAssembly({
                 stroke="#6f7f8f"
                 strokeWidth="1"
               />
-              
+
               {/* Remove stroke at tooth base where teeth contact magnet */}
               <rect
                 x={pole.x}
@@ -806,8 +806,9 @@ export function MzhuAssembly({
           {/* -------------------------------------------------
            * Magnetic flux direction (from FEMM analysis)
            *
-           * Flux path: N-pole (up) → right pole → down through teeth
-           *           → left pole → S-pole (down) → yoke return
+           * Flux circulates: magnet → all right teeth down → shaft
+           *                → all left teeth up → magnet
+           * No flux exits to yoke (stays within sealing circuit)
            * ------------------------------------------------- */}
 
           <g
@@ -816,50 +817,38 @@ export function MzhuAssembly({
             strokeOpacity="0.8"
             strokeWidth="1.25"
           >
-            {/* Right pole — top to teeth */}
-            <line
-              x1={RIGHT_POLE.x + RIGHT_POLE.w / 2}
-              y1="120"
-              x2={RIGHT_POLE.x + RIGHT_POLE.w / 2}
-              y2="180"
-              markerEnd="url(#mz-flux-arrow)"
-            />
+            {/* Right side: teeth downward */}
+            {rightTeeth.map((tooth, idx) => (
+              <line
+                key={`right-flux-${idx}`}
+                x1={tooth}
+                y1="236"
+                x2={tooth}
+                y2="250"
+                markerEnd="url(#mz-flux-arrow)"
+              />
+            ))}
 
-            {/* Bottom right — down to shaft area */}
+            {/* Bottom: right to left along shaft */}
             <line
-              x1={rightTeeth[2]}
-              y1="236"
-              x2={rightTeeth[2]}
-              y2="250"
-              markerEnd="url(#mz-flux-arrow)"
-            />
-
-            {/* Bottom — right to left along shaft */}
-            <line
-              x1={rightTeeth[2] - 40}
+              x1={rightTeeth[5] - 20}
               y1="262"
-              x2={leftTeeth[3] + 40}
+              x2={leftTeeth[0] + 20}
               y2="262"
               markerEnd="url(#mz-flux-arrow)"
             />
 
-            {/* Bottom left — up from shaft */}
-            <line
-              x1={leftTeeth[3]}
-              y1="250"
-              x2={leftTeeth[3]}
-              y2="236"
-              markerEnd="url(#mz-flux-arrow)"
-            />
-
-            {/* Left pole — teeth to magnet */}
-            <line
-              x1={LEFT_POLE.x + LEFT_POLE.w / 2}
-              y1="180"
-              x2={LEFT_POLE.x + LEFT_POLE.w / 2}
-              y2="120"
-              markerEnd="url(#mz-flux-arrow)"
-            />
+            {/* Left side: teeth upward */}
+            {leftTeeth.map((tooth, idx) => (
+              <line
+                key={`left-flux-${idx}`}
+                x1={tooth}
+                y1="250"
+                x2={tooth}
+                y2="236"
+                markerEnd="url(#mz-flux-arrow)"
+              />
+            ))}
           </g>
         </g>
       </defs>
