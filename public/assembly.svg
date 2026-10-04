@@ -1,0 +1,997 @@
+<svg
+  width="900"
+  height="560"
+  viewBox="-150 0 900 560"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label="Схема магнитожидкостного уплотнения в осевом сечении"
+>
+  <defs>
+    <!-- Shaft -->
+    <linearGradient
+      id="mz-shaft"
+      x1="0"
+      y1="254"
+      x2="0"
+      y2="306"
+      gradientUnits="userSpaceOnUse"
+    >
+      <stop offset="0" stop-color="#d5dde5"/>
+      <stop offset="0.18" stop-color="#9eabb8"/>
+      <stop offset="0.5" stop-color="#5d6a77"/>
+      <stop offset="0.82" stop-color="#8d9aa7"/>
+      <stop offset="1" stop-color="#4a5560"/>
+    </linearGradient>
+
+    <linearGradient
+      id="mz-shaft-fade"
+      x1="-260"
+      y1="0"
+      x2="160"
+      y2="0"
+      gradientUnits="userSpaceOnUse"
+    >
+      <stop offset="0" stop-color="#fff" stop-opacity="0"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="1"/>
+    </linearGradient>
+
+    <mask
+      id="mz-shaft-mask"
+      maskUnits="userSpaceOnUse"
+      x="-2000"
+      y="0"
+      width="5000"
+      height="560"
+    >
+      <rect
+        x="-2000"
+        y="0"
+        width="5000"
+        height="560"
+        fill="url(#mz-shaft-fade)"
+      />
+    </mask>
+
+    <!-- Steel -->
+    <linearGradient
+      id="mz-steel"
+      x1="0"
+      y1="96"
+      x2="0"
+      y2="240"
+      gradientUnits="userSpaceOnUse"
+    >
+      <stop offset="0" stop-color="#303a45"/>
+      <stop offset="1" stop-color="#1f2730"/>
+    </linearGradient>
+
+    <!-- Magnet -->
+    <linearGradient
+      id="mz-magnet"
+      x1="230"
+      y1="0"
+      x2="390"
+      y2="0"
+      gradientUnits="userSpaceOnUse"
+    >
+      <stop offset="0" stop-color="#3a4048"/>
+      <stop offset="0.5" stop-color="#4c535c"/>
+      <stop offset="1" stop-color="#3a4048"/>
+    </linearGradient>
+
+    <!-- Magnetic fluid -->
+    <linearGradient
+      id="mz-fluid"
+      x1="0"
+      y1="240"
+      x2="0"
+      y2="254"
+      gradientUnits="userSpaceOnUse"
+    >
+      <stop offset="0" stop-color="#3ee0c8"/>
+      <stop offset="1" stop-color="#1f9e8c"/>
+    </linearGradient>
+
+    <!-- Glow -->
+    <radialGradient
+      id="mz-glow"
+      cx="310"
+      cy="280"
+      r="360"
+      gradientUnits="userSpaceOnUse"
+    >
+      <stop offset="0" stop-color="#3ee0c8" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="#3ee0c8" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Housing hatch -->
+    <pattern
+      id="mz-hatch"
+      width="8"
+      height="8"
+      patternUnits="userSpaceOnUse"
+      patternTransform="rotate(45)"
+    >
+      <line
+        x1="0"
+        y1="0"
+        x2="0"
+        y2="8"
+        stroke="#a9b6c3"
+        stroke-opacity="0.08"
+        stroke-width="2"
+      />
+    </pattern>
+
+    <!-- Callout arrow -->
+    <marker
+      id="mz-callout-arrow"
+      viewBox="0 0 8 8"
+      refX="7"
+      refY="4"
+      markerWidth="6"
+      markerHeight="6"
+      orient="auto"
+    >
+      <path
+        d="M0 0L8 4L0 8Z"
+        fill="#a9b6c3"
+      />
+    </marker>
+
+    <!-- Flux arrow -->
+    <marker
+      id="mz-flux-arrow"
+      viewBox="0 0 8 8"
+      refX="7"
+      refY="4"
+      markerWidth="5"
+      markerHeight="5"
+      orient="auto"
+    >
+      <path
+        d="M0 0L8 4L0 8Z"
+        fill="#3ee0c8"
+      />
+    </marker>
+  </defs>
+
+  <!-- Magnetic field glow -->
+  <ellipse
+    cx="310"
+    cy="280"
+    rx="340"
+    ry="230"
+    fill="url(#mz-glow)"
+  />
+
+  <!-- Shaft -->
+  <g mask="url(#mz-shaft-mask)">
+    <rect
+      x="-320"
+      y="254"
+      width="1700"
+      height="52"
+      fill="url(#mz-shaft)"
+    />
+
+    <line
+      x1="-320"
+      y1="280"
+      x2="1380"
+      y2="280"
+      stroke="#e9eef2"
+      stroke-opacity="0.35"
+      stroke-width="0.8"
+      stroke-dasharray="28 6 4 6"
+    />
+  </g>
+
+  <!-- ========================= -->
+  <!-- UPPER HOUSING -->
+  <!-- ========================= -->
+
+  <path
+    d="
+      M90 70
+      H530
+      V248
+      H502
+      V96
+      H118
+      V248
+      H90
+      Z
+    "
+    fill="#171d24"
+    stroke="#3a4450"
+    stroke-width="1"
+  />
+
+  <path
+    d="
+      M90 70
+      H530
+      V248
+      H502
+      V96
+      H118
+      V248
+      H90
+      Z
+    "
+    fill="url(#mz-hatch)"
+  />
+
+  <!-- Bolts -->
+  <g>
+    <rect
+      x="97"
+      y="60"
+      width="14"
+      height="10"
+      rx="1.5"
+      fill="#56616d"
+    />
+    <line
+      x1="104"
+      y1="70"
+      x2="104"
+      y2="150"
+      stroke="#56616d"
+      stroke-width="3"
+      stroke-dasharray="3 2"
+    />
+
+    <rect
+      x="509"
+      y="60"
+      width="14"
+      height="10"
+      rx="1.5"
+      fill="#56616d"
+    />
+    <line
+      x1="516"
+      y1="70"
+      x2="516"
+      y2="150"
+      stroke="#56616d"
+      stroke-width="3"
+      stroke-dasharray="3 2"
+    />
+  </g>
+
+  <!-- ========================= -->
+  <!-- UPPER POLE PIECES -->
+  <!-- ========================= -->
+
+  <rect
+    x="118"
+    y="96"
+    width="112"
+    height="132"
+    fill="url(#mz-steel)"
+    stroke="#6f7f8f"
+    stroke-width="1"
+  />
+
+  <rect
+    x="390"
+    y="96"
+    width="112"
+    height="132"
+    fill="url(#mz-steel)"
+    stroke="#6f7f8f"
+    stroke-width="1"
+  />
+
+  <!-- Upper teeth - left -->
+  <path d="M117 228 L124 240 L130 240 L137 228 Z" fill="#2f3842" stroke="#8a99a8"/>
+  <path d="M135 228 L142 240 L148 240 L155 228 Z" fill="#2f3842" stroke="#8a99a8"/>
+  <path d="M153 228 L160 240 L166 240 L173 228 Z" fill="#2f3842" stroke="#8a99a8"/>
+  <path d="M171 228 L178 240 L184 240 L191 228 Z" fill="#2f3842" stroke="#8a99a8"/>
+  <path d="M189 228 L196 240 L202 240 L209 228 Z" fill="#2f3842" stroke="#8a99a8"/>
+  <path d="M207 228 L214 240 L220 240 L227 228 Z" fill="#2f3842" stroke="#8a99a8"/>
+
+  <!-- Upper teeth - right -->
+  <path d="M389 228 L396 240 L402 240 L409 228 Z" fill="#2f3842" stroke="#8a99a8"/>
+  <path d="M407 228 L414 240 L420 240 L427 228 Z" fill="#2f3842" stroke="#8a99a8"/>
+  <path d="M425 228 L432 240 L438 240 L445 228 Z" fill="#2f3842" stroke="#8a99a8"/>
+  <path d="M443 228 L450 240 L456 240 L463 228 Z" fill="#2f3842" stroke="#8a99a8"/>
+  <path d="M461 228 L468 240 L474 240 L481 228 Z" fill="#2f3842" stroke="#8a99a8"/>
+  <path d="M479 228 L486 240 L492 240 L499 228 Z" fill="#2f3842" stroke="#8a99a8"/>
+
+  <!-- ========================= -->
+  <!-- UPPER YOKE -->
+  <!-- ========================= -->
+
+  <rect
+    x="230"
+    y="96"
+    width="160"
+    height="20"
+    fill="url(#mz-steel)"
+    stroke="#6f7f8f"
+    stroke-width="1"
+  />
+
+  <!-- ========================= -->
+  <!-- UPPER MAGNET -->
+  <!-- ========================= -->
+
+  <rect
+    x="230"
+    y="116"
+    width="160"
+    height="90"
+    fill="url(#mz-magnet)"
+    stroke="#8794a2"
+    stroke-width="1"
+  />
+
+  <rect
+    x="230"
+    y="116"
+    width="80"
+    height="90"
+    fill="#6f7f8f"
+    fill-opacity="0.08"
+  />
+
+  <!-- Magnetic poles -->
+  <g
+    font-family="IBM Plex Mono, monospace"
+    font-size="10"
+    fill="#a9b6c3"
+  >
+    <text x="244" y="172">S</text>
+    <text x="368" y="172">N</text>
+  </g>
+
+  <!-- ========================= -->
+  <!-- UPPER MAGNETIC FLUID -->
+  <!-- ========================= -->
+
+  <path
+    d="
+      M123 239
+      L131 239
+      Q133 251 137 254
+      L117 254
+      Q121 251 123 239
+      Z
+    "
+    fill="url(#mz-fluid)"
+  />
+
+  <path
+    d="
+      M141 239
+      L149 239
+      Q151 251 155 254
+      L135 254
+      Q139 251 141 239
+      Z
+    "
+    fill="url(#mz-fluid)"
+  />
+
+  <path
+    d="
+      M159 239
+      L167 239
+      Q169 251 173 254
+      L153 254
+      Q157 251 159 239
+      Z
+    "
+    fill="url(#mz-fluid)"
+  />
+
+  <path
+    d="
+      M177 239
+      L185 239
+      Q187 251 191 254
+      L171 254
+      Q175 251 177 239
+      Z
+    "
+    fill="url(#mz-fluid)"
+  />
+
+  <path
+    d="
+      M195 239
+      L203 239
+      Q205 251 209 254
+      L189 254
+      Q193 251 195 239
+      Z
+    "
+    fill="url(#mz-fluid)"
+  />
+
+  <path
+    d="
+      M213 239
+      L221 239
+      Q223 251 227 254
+      L207 254
+      Q211 251 213 239
+      Z
+    "
+    fill="url(#mz-fluid)"
+  />
+
+  <path
+    d="
+      M395 239
+      L403 239
+      Q405 251 409 254
+      L389 254
+      Q393 251 395 239
+      Z
+    "
+    fill="url(#mz-fluid)"
+  />
+
+  <path
+    d="
+      M413 239
+      L421 239
+      Q423 251 427 254
+      L407 254
+      Q411 251 413 239
+      Z
+    "
+    fill="url(#mz-fluid)"
+  />
+
+  <path
+    d="
+      M431 239
+      L439 239
+      Q441 251 445 254
+      L425 254
+      Q429 251 431 239
+      Z
+    "
+    fill="url(#mz-fluid)"
+  />
+
+  <path
+    d="
+      M449 239
+      L457 239
+      Q459 251 463 254
+      L443 254
+      Q447 251 449 239
+      Z
+    "
+    fill="url(#mz-fluid)"
+  />
+
+  <path
+    d="
+      M467 239
+      L475 239
+      Q477 251 481 254
+      L461 254
+      Q465 251 467 239
+      Z
+    "
+    fill="url(#mz-fluid)"
+  />
+
+  <path
+    d="
+      M485 239
+      L493 239
+      Q495 251 499 254
+      L479 254
+      Q483 251 485 239
+      Z
+    "
+    fill="url(#mz-fluid)"
+  />
+
+  <!-- ========================= -->
+  <!-- UPPER MAGNETIC FLUX -->
+  <!-- ========================= -->
+
+  <path
+    d="
+      M201 180
+      H379
+      Q399 180 399 200
+      V254
+      Q399 260 393 260
+      H187
+      Q181 260 181 254
+      V200
+      Q181 180 201 180
+      Z
+    "
+    stroke="#3ee0c8"
+    stroke-opacity="0.63"
+    stroke-width="1.3"
+    stroke-linecap="round"
+    fill="none"
+  />
+
+  <path
+    d="
+      M183 158
+      H397
+      Q417 158 417 178
+      V260
+      Q417 266 411 266
+      H169
+      Q163 266 163 260
+      V178
+      Q163 158 183 158
+      Z
+    "
+    stroke="#3ee0c8"
+    stroke-opacity="0.75"
+    stroke-width="1.3"
+    stroke-linecap="round"
+    fill="none"
+  />
+
+  <path
+    d="
+      M165 134
+      H415
+      Q435 134 435 154
+      V265
+      Q435 271 429 271
+      H151
+      Q145 271 145 265
+      V154
+      Q145 134 165 134
+      Z
+    "
+    stroke="#3ee0c8"
+    stroke-opacity="0.51"
+    stroke-width="1.3"
+    stroke-linecap="round"
+    fill="none"
+  />
+
+  <path
+    d="
+      M147 112
+      H433
+      Q453 112 453 132
+      V270
+      Q453 276 447 276
+      H133
+      Q127 276 127 270
+      V132
+      Q127 112 147 112
+      Z
+    "
+    stroke="#3ee0c8"
+    stroke-opacity="0.39"
+    stroke-width="1.3"
+    stroke-linecap="round"
+    fill="none"
+  />
+
+  <!-- Flux arrows - upper -->
+  <g
+    stroke="#3ee0c8"
+    stroke-opacity="0.7"
+    stroke-width="1.2"
+  >
+    <line
+      x1="205"
+      y1="158"
+      x2="373"
+      y2="158"
+      marker-end="url(#mz-flux-arrow)"
+    />
+
+    <line
+      x1="417"
+      y1="194"
+      x2="417"
+      y2="238"
+      marker-end="url(#mz-flux-arrow)"
+    />
+
+    <line
+      x1="391"
+      y1="266"
+      x2="189"
+      y2="266"
+      marker-end="url(#mz-flux-arrow)"
+    />
+
+    <line
+      x1="163"
+      y1="232"
+      x2="163"
+      y2="178"
+      marker-end="url(#mz-flux-arrow)"
+    />
+  </g>
+
+  <!-- ========================= -->
+  <!-- LOWER HALF -->
+  <!-- ========================= -->
+
+  <g transform="translate(0 560) scale(1 -1)">
+    <!-- Housing -->
+    <path
+      d="
+        M90 70
+        H530
+        V248
+        H502
+        V96
+        H118
+        V248
+        H90
+        Z
+      "
+      fill="#171d24"
+      stroke="#3a4450"
+      stroke-width="1"
+    />
+
+    <path
+      d="
+        M90 70
+        H530
+        V248
+        H502
+        V96
+        H118
+        V248
+        H90
+        Z
+      "
+      fill="url(#mz-hatch)"
+    />
+
+    <!-- Bolts -->
+    <rect
+      x="97"
+      y="60"
+      width="14"
+      height="10"
+      rx="1.5"
+      fill="#56616d"
+    />
+
+    <line
+      x1="104"
+      y1="70"
+      x2="104"
+      y2="150"
+      stroke="#56616d"
+      stroke-width="3"
+      stroke-dasharray="3 2"
+    />
+
+    <rect
+      x="509"
+      y="60"
+      width="14"
+      height="10"
+      rx="1.5"
+      fill="#56616d"
+    />
+
+    <line
+      x1="516"
+      y1="70"
+      x2="516"
+      y2="150"
+      stroke="#56616d"
+      stroke-width="3"
+      stroke-dasharray="3 2"
+    />
+
+    <!-- Pole pieces -->
+    <rect
+      x="118"
+      y="96"
+      width="112"
+      height="132"
+      fill="url(#mz-steel)"
+      stroke="#6f7f8f"
+      stroke-width="1"
+    />
+
+    <rect
+      x="390"
+      y="96"
+      width="112"
+      height="132"
+      fill="url(#mz-steel)"
+      stroke="#6f7f8f"
+      stroke-width="1"
+    />
+
+    <!-- Teeth left -->
+    <path d="M117 228 L124 240 L130 240 L137 228 Z" fill="#2f3842" stroke="#8a99a8"/>
+    <path d="M135 228 L142 240 L148 240 L155 228 Z" fill="#2f3842" stroke="#8a99a8"/>
+    <path d="M153 228 L160 240 L166 240 L173 228 Z" fill="#2f3842" stroke="#8a99a8"/>
+    <path d="M171 228 L178 240 L184 240 L191 228 Z" fill="#2f3842" stroke="#8a99a8"/>
+    <path d="M189 228 L196 240 L202 240 L209 228 Z" fill="#2f3842" stroke="#8a99a8"/>
+    <path d="M207 228 L214 240 L220 240 L227 228 Z" fill="#2f3842" stroke="#8a99a8"/>
+
+    <!-- Teeth right -->
+    <path d="M389 228 L396 240 L402 240 L409 228 Z" fill="#2f3842" stroke="#8a99a8"/>
+    <path d="M407 228 L414 240 L420 240 L427 228 Z" fill="#2f3842" stroke="#8a99a8"/>
+    <path d="M425 228 L432 240 L438 240 L445 228 Z" fill="#2f3842" stroke="#8a99a8"/>
+    <path d="M443 228 L450 240 L456 240 L463 228 Z" fill="#2f3842" stroke="#8a99a8"/>
+    <path d="M461 228 L468 240 L474 240 L481 228 Z" fill="#2f3842" stroke="#8a99a8"/>
+    <path d="M479 228 L486 240 L492 240 L499 228 Z" fill="#2f3842" stroke="#8a99a8"/>
+
+    <!-- Yoke -->
+    <rect
+      x="230"
+      y="96"
+      width="160"
+      height="20"
+      fill="url(#mz-steel)"
+      stroke="#6f7f8f"
+      stroke-width="1"
+    />
+
+    <!-- Magnet -->
+    <rect
+      x="230"
+      y="116"
+      width="160"
+      height="90"
+      fill="url(#mz-magnet)"
+      stroke="#8794a2"
+      stroke-width="1"
+    />
+
+    <rect
+      x="230"
+      y="116"
+      width="80"
+      height="90"
+      fill="#6f7f8f"
+      fill-opacity="0.08"
+    />
+
+    <!-- Fluid -->
+    <path d="M123 239 L131 239 Q133 251 137 254 L117 254 Q121 251 123 239Z" fill="url(#mz-fluid)"/>
+    <path d="M141 239 L149 239 Q151 251 155 254 L135 254 Q139 251 141 239Z" fill="url(#mz-fluid)"/>
+    <path d="M159 239 L167 239 Q169 251 173 254 L153 254 Q157 251 159 239Z" fill="url(#mz-fluid)"/>
+    <path d="M177 239 L185 239 Q187 251 191 254 L171 254 Q175 251 177 239Z" fill="url(#mz-fluid)"/>
+    <path d="M195 239 L203 239 Q205 251 209 254 L189 254 Q193 251 195 239Z" fill="url(#mz-fluid)"/>
+    <path d="M213 239 L221 239 Q223 251 227 254 L207 254 Q211 251 213 239Z" fill="url(#mz-fluid)"/>
+
+    <path d="M395 239 L403 239 Q405 251 409 254 L389 254 Q393 251 395 239Z" fill="url(#mz-fluid)"/>
+    <path d="M413 239 L421 239 Q423 251 427 254 L407 254 Q411 251 413 239Z" fill="url(#mz-fluid)"/>
+    <path d="M431 239 L439 239 Q441 251 445 254 L425 254 Q429 251 431 239Z" fill="url(#mz-fluid)"/>
+    <path d="M449 239 L457 239 Q459 251 463 254 L443 254 Q447 251 449 239Z" fill="url(#mz-fluid)"/>
+    <path d="M467 239 L475 239 Q477 251 481 254 L461 254 Q465 251 467 239Z" fill="url(#mz-fluid)"/>
+    <path d="M485 239 L493 239 Q495 251 499 254 L479 254 Q483 251 485 239Z" fill="url(#mz-fluid)"/>
+
+    <!-- Flux -->
+    <path
+      d="
+        M201 180
+        H379
+        Q399 180 399 200
+        V254
+        Q399 260 393 260
+        H187
+        Q181 260 181 254
+        V200
+        Q181 180 201 180
+        Z
+      "
+      stroke="#3ee0c8"
+      stroke-opacity="0.63"
+      stroke-width="1.3"
+      stroke-linecap="round"
+      fill="none"
+    />
+
+    <path
+      d="
+        M183 158
+        H397
+        Q417 158 417 178
+        V260
+        Q417 266 411 266
+        H169
+        Q163 266 163 260
+        V178
+        Q163 158 183 158
+        Z
+      "
+      stroke="#3ee0c8"
+      stroke-opacity="0.75"
+      stroke-width="1.3"
+      stroke-linecap="round"
+      fill="none"
+    />
+
+    <path
+      d="
+        M165 134
+        H415
+        Q435 134 435 154
+        V265
+        Q435 271 429 271
+        H151
+        Q145 271 145 265
+        V154
+        Q145 134 165 134
+        Z
+      "
+      stroke="#3ee0c8"
+      stroke-opacity="0.51"
+      stroke-width="1.3"
+      stroke-linecap="round"
+      fill="none"
+    />
+
+    <path
+      d="
+        M147 112
+        H433
+        Q453 112 453 132
+        V270
+        Q453 276 447 276
+        H133
+        Q127 276 127 270
+        V132
+        Q127 112 147 112
+        Z
+      "
+      stroke="#3ee0c8"
+      stroke-opacity="0.39"
+      stroke-width="1.3"
+      stroke-linecap="round"
+      fill="none"
+    />
+  </g>
+
+  <!-- Lower magnetic poles -->
+  <g
+    font-family="IBM Plex Mono, monospace"
+    font-size="10"
+    fill="#a9b6c3"
+  >
+    <text x="244" y="388">S</text>
+    <text x="368" y="388">N</text>
+  </g>
+
+  <!-- ========================= -->
+  <!-- CALLOUTS -->
+  <!-- ========================= -->
+
+  <g
+    font-family="IBM Plex Mono, monospace"
+    font-size="10"
+    font-weight="500"
+  >
+    <!-- 01 Shaft -->
+    <line
+      x1="700"
+      y1="304"
+      x2="518"
+      y2="280"
+      stroke="#a9b6c3"
+      stroke-opacity="0.55"
+      stroke-width="0.85"
+      marker-end="url(#mz-callout-arrow)"
+    />
+    <circle cx="518" cy="280" r="2" fill="#3ee0c8"/>
+    <text x="700" y="300" text-anchor="middle" fill="#a9b6c3">
+      01 ВАЛ
+    </text>
+
+    <!-- 02 Magnet -->
+    <line
+      x1="300"
+      y1="40"
+      x2="310"
+      y2="161"
+      stroke="#a9b6c3"
+      stroke-opacity="0.55"
+      stroke-width="0.85"
+      marker-end="url(#mz-callout-arrow)"
+    />
+    <circle cx="310" cy="161" r="2" fill="#3ee0c8"/>
+    <text x="300" y="36" text-anchor="middle" fill="#a9b6c3">
+      02 МАГНИТ
+    </text>
+
+    <!-- 03 Pole -->
+    <line
+      x1="120"
+      y1="124"
+      x2="174"
+      y2="150"
+      stroke="#a9b6c3"
+      stroke-opacity="0.55"
+      stroke-width="0.85"
+      marker-end="url(#mz-callout-arrow)"
+    />
+    <circle cx="174" cy="150" r="2" fill="#3ee0c8"/>
+    <text x="120" y="120" text-anchor="middle" fill="#a9b6c3">
+      03 НАКОНЕЧНИК
+    </text>
+
+    <!-- 04 Housing -->
+    <line
+      x1="700"
+      y1="154"
+      x2="526"
+      y2="178"
+      stroke="#a9b6c3"
+      stroke-opacity="0.55"
+      stroke-width="0.85"
+      marker-end="url(#mz-callout-arrow)"
+    />
+    <circle cx="526" cy="178" r="2" fill="#3ee0c8"/>
+    <text x="700" y="150" text-anchor="middle" fill="#a9b6c3">
+      04 КОРПУС
+    </text>
+
+    <!-- 05 Fluid -->
+    <line
+      x1="700"
+      y1="234"
+      x2="417"
+      y2="250"
+      stroke="#a9b6c3"
+      stroke-opacity="0.55"
+      stroke-width="0.85"
+      marker-end="url(#mz-callout-arrow)"
+    />
+    <circle cx="417" cy="250" r="2" fill="#3ee0c8"/>
+    <text x="700" y="230" text-anchor="middle" fill="#a9b6c3">
+      05 ЖИДКОСТЬ
+    </text>
+
+    <!-- 06 Yoke -->
+    <line
+      x1="390"
+      y1="64"
+      x2="310"
+      y2="106"
+      stroke="#a9b6c3"
+      stroke-opacity="0.55"
+      stroke-width="0.85"
+      marker-end="url(#mz-callout-arrow)"
+    />
+    <circle cx="310" cy="106" r="2" fill="#3ee0c8"/>
+    <text x="390" y="60" text-anchor="middle" fill="#a9b6c3">
+      06 ЯРМО
+    </text>
+
+    <!-- 07 Flux -->
+    <line
+      x1="120"
+      y1="58"
+      x2="435"
+      y2="198"
+      stroke="#a9b6c3"
+      stroke-opacity="0.55"
+      stroke-width="0.85"
+      marker-end="url(#mz-callout-arrow)"
+    />
+    <circle cx="435" cy="198" r="2" fill="#3ee0c8"/>
+    <text x="120" y="54" text-anchor="middle" fill="#a9b6c3">
+      07 ПОТОК
+    </text>
+  </g>
+</svg>

@@ -2,130 +2,732 @@ type MzhuAssemblyProps = {
   className?: string
 }
 
-/* Schematic axial half-section (upper half is drawn, lower half is mirrored). Not to scale: the 0,1 мм gap is exaggerated. */
+/* ============================================================
+ * MZHU ASSEMBLY
+ * Schematic axial half-section.
+ * Upper half is defined explicitly and mirrored below the shaft.
+ * ============================================================ */
+
 const AXIS_Y = 280
-const SHAFT_TOP = 252
+
+const SHAFT_TOP = 254
+const SHAFT_BOTTOM = AXIS_Y * 2 - SHAFT_TOP
+
 const TOOTH_BASE_Y = 228
 const TOOTH_TIP_Y = 240
 
-const LEFT_POLE = { x: 258, w: 112 }
-const RIGHT_POLE = { x: 530, w: 112 }
-const MAGNET = { x: 370, w: 160, y: 96, h: 100 }
+/*
+ * The real gap is intentionally exaggerated visually.
+ * The actual dimension is shown separately as δ = 0,1 мм.
+ */
+const GAP_VALUE = 'δ = 0,1 мм'
 
-const PITCH = 28
-const toothCenters = (x0: number) => [0, 1, 2, 3].map((i) => x0 + PITCH / 2 + i * PITCH)
-const leftTeeth = toothCenters(LEFT_POLE.x)
-const rightTeeth = toothCenters(RIGHT_POLE.x)
+/* Shift the complete sealing assembly relative to the shaft. */
+const ASSEMBLY_SHIFT_X = -140
 
-const toothPath = (c: number) =>
-  `M${c - 9} ${TOOTH_BASE_Y} L${c - 3} ${TOOTH_TIP_Y} L${c + 3} ${TOOTH_TIP_Y} L${c + 9} ${TOOTH_BASE_Y} Z`
+/* ------------------------------------------------------------
+ * Main geometry
+ * ------------------------------------------------------------ */
+
+const LEFT_POLE = {
+  x: 258 + ASSEMBLY_SHIFT_X,
+  w: 112,
+}
+
+const RIGHT_POLE = {
+  x: 530 + ASSEMBLY_SHIFT_X,
+  w: 112,
+}
+
+const YOKE = {
+  x: 370 + ASSEMBLY_SHIFT_X,
+  w: 160,
+  y: 96,
+  h: 20,
+}
+
+const MAGNET = {
+  x: 370 + ASSEMBLY_SHIFT_X,
+  w: 160,
+  y: 116,
+  h: 90,
+}
+
+/*
+ * Housing is calculated from the pole-piece dimensions.
+ * Therefore the pole pieces and their teeth always remain
+ * inside the housing.
+ */
+const HOUSING = {
+  left: LEFT_POLE.x - 28,
+  right: RIGHT_POLE.x + RIGHT_POLE.w + 28,
+  outerTop: 70,
+  innerTop: 96,
+  bottom: 248,
+  innerLeft: LEFT_POLE.x,
+  innerRight: RIGHT_POLE.x + RIGHT_POLE.w,
+}
+
+const BOLTS = [
+  HOUSING.left + 14,
+  HOUSING.right - 14,
+]
+
+/* ------------------------------------------------------------
+ * Teeth
+ *
+ * Six teeth fill the entire pole-piece width.
+ *
+ * Important:
+ *   first tooth starts exactly at x
+ *   last tooth ends exactly at x + w
+ * ------------------------------------------------------------ */
+
+const TOOTH_COUNT = 6
+
+const getToothPitch = (poleWidth: number) =>
+  poleWidth / TOOTH_COUNT
+
+const getToothCenters = (pole: { x: number; w: number }) => {
+  const pitch = getToothPitch(pole.w)
+
+  return Array.from(
+    { length: TOOTH_COUNT },
+    (_, index) => pole.x + pitch * (index + 0.5),
+  )
+}
+
+const leftTeeth = getToothCenters(LEFT_POLE)
+const rightTeeth = getToothCenters(RIGHT_POLE)
+
+const toothPath = (
+  poleX: number,
+  poleWidth: number,
+  index: number,
+) => {
+  const pitch = poleWidth / TOOTH_COUNT
+
+  const x0 = poleX + index * pitch
+  const x1 = x0 + pitch
+  const center = (x0 + x1) / 2
+
+  const tipHalfWidth = Math.min(3.5, pitch * 0.22)
+
+  return `
+    M${x0} ${TOOTH_BASE_Y}
+    L${center - tipHalfWidth} ${TOOTH_TIP_Y}
+    L${center + tipHalfWidth} ${TOOTH_TIP_Y}
+    L${x1} ${TOOTH_BASE_Y}
+    Z
+  `
+}
+
+/* ------------------------------------------------------------
+ * Magnetic fluid
+ * ------------------------------------------------------------ */
 
 const fluidPath = (c: number) =>
-  `M${c - 4} ${TOOTH_TIP_Y - 1} L${c + 4} ${TOOTH_TIP_Y - 1} Q${c + 6} ${SHAFT_TOP - 3} ${c + 10} ${SHAFT_TOP} L${c - 10} ${SHAFT_TOP} Q${c - 6} ${SHAFT_TOP - 3} ${c - 4} ${TOOTH_TIP_Y - 1} Z`
+  `
+    M${c - 4} ${TOOTH_TIP_Y - 1}
+    L${c + 4} ${TOOTH_TIP_Y - 1}
+    Q${c + 6} ${SHAFT_TOP - 3} ${c + 10} ${SHAFT_TOP}
+    L${c - 10} ${SHAFT_TOP}
+    Q${c - 6} ${SHAFT_TOP - 3} ${c - 4} ${TOOTH_TIP_Y - 1}
+    Z
+  `
 
-/* Closed flux loop: through the magnet (S→N), down the right pole + teeth, along the shaft, up the left teeth. */
-const fluxLoop = (top: number, xr: number, xl: number, depth: number) =>
-  `M${xl + 20} ${top} H${xr - 20} Q${xr} ${top} ${xr} ${top + 20} V${depth - 6} Q${xr} ${depth} ${xr - 6} ${depth} H${xl + 6} Q${xl} ${depth} ${xl} ${depth - 6} V${top + 20} Q${xl} ${top} ${xl + 20} ${top} Z`
+/* ------------------------------------------------------------
+ * Magnetic flux
+ * ------------------------------------------------------------ */
+
+const fluxLoop = (
+  top: number,
+  xr: number,
+  xl: number,
+  depth: number,
+) =>
+  `
+    M${xl + 20} ${top}
+    H${xr - 20}
+
+    Q${xr} ${top} ${xr} ${top + 20}
+
+    V${depth - 6}
+
+    Q${xr} ${depth} ${xr - 6} ${depth}
+
+    H${xl + 6}
+
+    Q${xl} ${depth} ${xl} ${depth - 6}
+
+    V${top + 20}
+
+    Q${xl} ${top} ${xl + 20} ${top}
+
+    Z
+  `
 
 const loops = [
-  { top: 180, xr: rightTeeth[0], xl: leftTeeth[3], depth: 260 },
-  { top: 158, xr: rightTeeth[1], xl: leftTeeth[2], depth: 266 },
-  { top: 134, xr: rightTeeth[2], xl: leftTeeth[1], depth: 271 },
-  { top: 112, xr: rightTeeth[3], xl: leftTeeth[0], depth: 276 },
+  {
+    top: 180,
+    xr: rightTeeth[0],
+    xl: leftTeeth[5],
+    depth: 260,
+  },
+  {
+    top: 158,
+    xr: rightTeeth[1],
+    xl: leftTeeth[4],
+    depth: 266,
+  },
+  {
+    top: 136,
+    xr: rightTeeth[2],
+    xl: leftTeeth[3],
+    depth: 271,
+  },
+  {
+    top: 114,
+    xr: rightTeeth[3],
+    xl: leftTeeth[2],
+    depth: 276,
+  },
 ]
+
+/* ------------------------------------------------------------
+ * ГОСТ-style callout geometry
+ *
+ * A leader consists of:
+ *
+ *     element → inclined/vertical segment → elbow → shelf → text
+ *
+ * Lines are intentionally routed through different zones so
+ * they do not cross each other.
+ * ------------------------------------------------------------ */
 
 const callouts = [
-  { n: '01', x: 800, y: 268, tx: 830, ty: 226 },
-  { n: '02', x: 450, y: 120, tx: 450, ty: 34 },
-  { n: '03', x: 314, y: 150, tx: 176, ty: 124 },
-  { n: '04', x: 628, y: 236, tx: 770, ty: 150 },
-  { n: '05', x: 656, y: 84, tx: 770, ty: 34 },
-  { n: '06', x: 572, y: 247, tx: 740, ty: 242 },
-  { n: '07', x: 244, y: 62, tx: 176, ty: 34 },
+  /* 01 — Shaft */
+  {
+    n: '01',
+    label: 'ВАЛ',
+    anchor: {
+      x: 90,
+      y: AXIS_Y - 10,
+    },
+    elbow: {
+      x: 45,
+      y: 210,
+    },
+    shelf: {
+      x1: 45,
+      x2: 8,
+      y: 210,
+    },
+    text: {
+      x: 8,
+      y: 206,
+      anchor: 'start' as const,
+    },
+  },
+
+  /* 02 — Magnet */
+  {
+    n: '03',
+    label: 'ПОСТОЯННЫЙ МАГНИТ',
+    anchor: {
+      x: MAGNET.x + 42,
+      y: MAGNET.y + 30,
+    },
+    elbow: {
+      x: MAGNET.x + 64,
+      y: 42,
+    },
+    shelf: {
+      x1: MAGNET.x + 64,
+      x2: MAGNET.x + 184,
+      y: 42,
+    },
+    text: {
+      x: MAGNET.x + 64,
+      y: 38,
+      anchor: 'start' as const,
+    },
+  },
+
+  /* 03 — Pole pieces */
+  {
+    n: '02',
+    label: 'ПОЛЮСНЫЕ НАКОНЕЧНИКИ',
+    anchor: {
+      x: LEFT_POLE.x + 38,
+      y: 150,
+    },
+    elbow: {
+      x: 180,
+      y: 30,
+    },
+    shelf: {
+      x1: 36,
+      x2: 36,
+      y: 30,
+    },
+    text: {
+      x: 36,
+      y: 26,
+      anchor: 'start' as const,
+    },
+  },
+
+  /* 04 — Housing */
+  {
+    n: '06',
+    label: 'КОРПУС',
+    anchor: {
+      x: HOUSING.right - 10,
+      y: 180 + 210,
+    },
+    elbow: {
+      x: 570,
+      y: 105 + 240,
+    },
+    shelf: {
+      x1: 570,
+      x2: 626,
+      y: 105 + 240,
+    },
+    text: {
+      x: 570,
+      y: 101 + 240,
+      anchor: 'start' as const,
+    },
+  },
+
+  /* 05 — Magnetic fluid */
+  {
+    n: '05',
+    label: 'МАГНИТНАЯ ЖИДКОСТЬ',
+    anchor: {
+      x: rightTeeth[4] + 2,
+      y: SHAFT_TOP - 8,
+    },
+    elbow: {
+      x: 555 - 18,
+      y: 215 - 40,
+    },
+    shelf: {
+      x1: 555 - 18,
+      x2: 662,
+      y: 215 - 40,
+    },
+    text: {
+      x: 555 - 18,
+      y: 211 - 40,
+      anchor: 'start' as const,
+    },
+  },
+
+  /* 06 — Yoke */
+  {
+    n: '04',
+    label: 'ЯРМО',
+    anchor: {
+      x: YOKE.x + YOKE.w - 25,
+      y: YOKE.y + YOKE.h / 2,
+    },
+    elbow: {
+      x: 435,
+      y: 52,
+    },
+    shelf: {
+      x1: 435,
+      x2: 485,
+      y: 52,
+    },
+    text: {
+      x: 435,
+      y: 48,
+      anchor: 'start' as const,
+    },
+  },
+
+  /* 07 — Flux direction */
+
 ]
 
-export function MzhuAssembly({ className = '' }: MzhuAssemblyProps) {
+/* ------------------------------------------------------------
+ * Component
+ * ------------------------------------------------------------ */
+
+export function MzhuAssembly({
+  className = '',
+}: MzhuAssemblyProps) {
   return (
     <svg
       className={className}
-      viewBox="0 0 900 560"
+      viewBox="-150 0 900 560"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       role="img"
-      aria-label="Схема магнитожидкостного уплотнения в осевом сечении: вал, кольцевой магнит, полюсные наконечники с зубьями и магнитная жидкость в рабочем зазоре"
+      aria-label="Схема магнитожидкостного уплотнения в осевом сечении"
       style={{ overflow: 'visible' }}
-      preserveAspectRatio="xMidYMid meet"
+      preserveAspectRatio="xMinYMid meet"
     >
       <defs>
-        <linearGradient id="mz-shaft" x1="0" y1={SHAFT_TOP} x2="0" y2={AXIS_Y * 2 - SHAFT_TOP} gradientUnits="userSpaceOnUse">
+        {/* =====================================================
+         * SHAFT
+         * ===================================================== */}
+
+        <linearGradient
+          id="mz-shaft"
+          x1="0"
+          y1={SHAFT_TOP}
+          x2="0"
+          y2={SHAFT_BOTTOM}
+          gradientUnits="userSpaceOnUse"
+        >
           <stop offset="0" stopColor="#d5dde5" />
           <stop offset="0.18" stopColor="#9eabb8" />
           <stop offset="0.5" stopColor="#5d6a77" />
           <stop offset="0.82" stopColor="#8d9aa7" />
           <stop offset="1" stopColor="#4a5560" />
         </linearGradient>
-        <linearGradient id="mz-shaft-fade" x1="-260" y1="0" x2="160" y2="0" gradientUnits="userSpaceOnUse">
-          <stop offset="0" stopColor="#fff" stopOpacity="0" />
-          <stop offset="1" stopColor="#fff" stopOpacity="1" />
+
+        <linearGradient
+          id="mz-shaft-fade"
+          x1="-260"
+          y1="0"
+          x2="160"
+          y2="0"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop
+            offset="0"
+            stopColor="#fff"
+            stopOpacity="0"
+          />
+
+          <stop
+            offset="1"
+            stopColor="#fff"
+            stopOpacity="1"
+          />
         </linearGradient>
-        <mask id="mz-shaft-mask" maskUnits="userSpaceOnUse" x="-2000" y="0" width="5000" height="560">
-          <rect x="-2000" y="0" width="5000" height="560" fill="url(#mz-shaft-fade)" />
+
+        <mask
+          id="mz-shaft-mask"
+          maskUnits="userSpaceOnUse"
+          x="-2000"
+          y="0"
+          width="5000"
+          height="560"
+        >
+          <rect
+            x="-2000"
+            y="0"
+            width="5000"
+            height="560"
+            fill="url(#mz-shaft-fade)"
+          />
         </mask>
-        <linearGradient id="mz-steel" x1="0" y1="96" x2="0" y2="240" gradientUnits="userSpaceOnUse">
-          <stop offset="0" stopColor="#3b4652" />
-          <stop offset="1" stopColor="#252d36" />
+
+        {/* =====================================================
+         * STEEL
+         * ===================================================== */}
+
+        <linearGradient
+          id="mz-steel"
+          x1="0"
+          y1="96"
+          x2="0"
+          y2="240"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop offset="0" stopColor="#303a45" />
+          <stop offset="1" stopColor="#1f2730" />
         </linearGradient>
-        <linearGradient id="mz-magnet" x1="370" y1="0" x2="530" y2="0" gradientUnits="userSpaceOnUse">
+
+        {/* =====================================================
+         * MAGNET
+         * ===================================================== */}
+
+        <linearGradient
+          id="mz-magnet"
+          x1={MAGNET.x}
+          y1="0"
+          x2={MAGNET.x + MAGNET.w}
+          y2="0"
+          gradientUnits="userSpaceOnUse"
+        >
           <stop offset="0" stopColor="#3a4048" />
           <stop offset="0.5" stopColor="#4c535c" />
           <stop offset="1" stopColor="#3a4048" />
         </linearGradient>
-        <linearGradient id="mz-fluid" x1="0" y1={TOOTH_TIP_Y} x2="0" y2={SHAFT_TOP} gradientUnits="userSpaceOnUse">
+
+        {/* =====================================================
+         * MAGNETIC FLUID
+         * ===================================================== */}
+
+        <linearGradient
+          id="mz-fluid"
+          x1="0"
+          y1={TOOTH_TIP_Y}
+          x2="0"
+          y2={SHAFT_TOP}
+          gradientUnits="userSpaceOnUse"
+        >
           <stop offset="0" stopColor="#3ee0c8" />
           <stop offset="1" stopColor="#1f9e8c" />
         </linearGradient>
-        <radialGradient id="mz-glow" cx="450" cy={AXIS_Y} r="360" gradientUnits="userSpaceOnUse">
-          <stop offset="0" stopColor="#3ee0c8" stopOpacity="0.16" />
-          <stop offset="1" stopColor="#3ee0c8" stopOpacity="0" />
+
+        {/* =====================================================
+         * GLOW
+         * ===================================================== */}
+
+        <radialGradient
+          id="mz-glow"
+          cx={450 + ASSEMBLY_SHIFT_X}
+          cy={AXIS_Y}
+          r="360"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop
+            offset="0"
+            stopColor="#3ee0c8"
+            stopOpacity="0.16"
+          />
+
+          <stop
+            offset="1"
+            stopColor="#3ee0c8"
+            stopOpacity="0"
+          />
         </radialGradient>
-        <pattern id="mz-hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-          <line x1="0" y1="0" x2="0" y2="8" stroke="#a9b6c3" strokeOpacity="0.08" strokeWidth="2" />
+
+        {/* =====================================================
+         * HOUSING HATCH
+         * ===================================================== */}
+
+        <pattern
+          id="mz-hatch"
+          width="8"
+          height="8"
+          patternUnits="userSpaceOnUse"
+          patternTransform="rotate(45)"
+        >
+          <line
+            x1="0"
+            y1="0"
+            x2="0"
+            y2="8"
+            stroke="#a9b6c3"
+            strokeOpacity="0.08"
+            strokeWidth="2"
+          />
         </pattern>
 
-        <g id="mz-half">
-          {/* 04 Housing (PLA) with M6 bolts */}
+        {/* =====================================================
+         * CALLOUT ARROW
+         *
+         * Filled arrowhead similar to technical-drawing
+         * leader-line termination.
+         * ===================================================== */}
+
+        <marker
+          id="mz-callout-arrow"
+          viewBox="0 0 10 10"
+          refX="8"
+          refY="5"
+          markerWidth="6"
+          markerHeight="6"
+          orient="auto"
+        >
           <path
-            d="M230 70 H670 V236 H642 V96 H258 V236 H230 Z"
+            d="M10 0L0 5L10 10Z"
+            fill="#a9b6c3"
+          />
+        </marker>
+
+        {/* =====================================================
+         * DIMENSION ARROW
+         * ===================================================== */}
+
+        <marker
+          id="mz-dimension-arrow"
+          viewBox="0 0 10 10"
+          refX="5"
+          refY="5"
+          markerWidth="5"
+          markerHeight="5"
+          orient="auto-start-reverse"
+        >
+          <path
+            d="M10 0 L0 5 L10 10 Z"
+            fill="#a9b6c3"
+          />
+        </marker>
+
+        {/* =====================================================
+         * FLUX ARROW
+         * ===================================================== */}
+
+        <marker
+          id="mz-flux-arrow"
+          viewBox="0 0 10 10"
+          refX="8"
+          refY="5"
+          markerWidth="5"
+          markerHeight="5"
+          orient="auto"
+        >
+          <path
+            d="M0 0 L10 5 L0 10 Z"
+            fill="#3ee0c8"
+          />
+        </marker>
+
+        {/* =====================================================
+         * UPPER HALF
+         * ===================================================== */}
+
+        <g id="mz-half">
+          {/* -------------------------------------------------
+           * 04 Housing
+           * ------------------------------------------------- */}
+
+          <path
+            d={`
+              M${HOUSING.left} ${HOUSING.outerTop}
+              H${HOUSING.right}
+              V${HOUSING.bottom}
+              H${HOUSING.innerRight}
+              V${HOUSING.innerTop}
+              H${HOUSING.innerLeft}
+              V${HOUSING.bottom}
+              H${HOUSING.left}
+              Z
+            `}
             fill="#171d24"
             stroke="#3a4450"
             strokeWidth="1"
           />
-          <path d="M230 70 H670 V236 H642 V96 H258 V236 H230 Z" fill="url(#mz-hatch)" />
-          {[244, 656].map((x) => (
+
+          <path
+            d={`
+              M${HOUSING.left} ${HOUSING.outerTop}
+              H${HOUSING.right}
+              V${HOUSING.bottom}
+              H${HOUSING.innerRight}
+              V${HOUSING.innerTop}
+              H${HOUSING.innerLeft}
+              V${HOUSING.bottom}
+              H${HOUSING.left}
+              Z
+            `}
+            fill="url(#mz-hatch)"
+          />
+
+          {/* -------------------------------------------------
+           * Housing bolts
+           * ------------------------------------------------- */}
+
+          {BOLTS.map((x) => (
             <g key={x}>
-              <rect x={x - 7} y="60" width="14" height="10" rx="1.5" fill="#56616d" />
-              <line x1={x} y1="70" x2={x} y2="150" stroke="#56616d" strokeWidth="3" strokeDasharray="3 2" />
+              <rect
+                x={x - 7}
+                y="60"
+                width="14"
+                height="10"
+                rx="1.5"
+                fill="#56616d"
+              />
+
+              <line
+                x1={x}
+                y1="70"
+                x2={x}
+                y2="150"
+                stroke="#56616d"
+                strokeWidth="3"
+                strokeDasharray="3 2"
+              />
             </g>
           ))}
 
-          {/* 03 Pole pieces / yoke (Сталь 10) with 4 trapezoid teeth each */}
-          {[LEFT_POLE, RIGHT_POLE].map((p) => (
+          {/* -------------------------------------------------
+           * 03 Pole pieces
+           * ------------------------------------------------- */}
+
+          {[LEFT_POLE, RIGHT_POLE].map((pole) => (
             <rect
-              key={p.x}
-              x={p.x}
+              key={pole.x}
+              x={pole.x}
               y="96"
-              width={p.w}
+              width={pole.w}
               height={TOOTH_BASE_Y - 96}
               fill="url(#mz-steel)"
               stroke="#6f7f8f"
               strokeWidth="1"
             />
           ))}
-          {[...leftTeeth, ...rightTeeth].map((c) => (
-            <path key={c} d={toothPath(c)} fill="#2f3842" stroke="#8a99a8" strokeWidth="1" />
-          ))}
 
-          {/* 02 Ring magnet NdFeB N35, axial magnetization */}
+          {/* -------------------------------------------------
+           * Teeth
+           *
+           * Exactly fill each pole piece from edge to edge.
+           * ------------------------------------------------- */}
+
+          {Array.from(
+            { length: TOOTH_COUNT },
+            (_, index) => (
+              <path
+                key={`left-tooth-${index}`}
+                d={toothPath(
+                  LEFT_POLE.x,
+                  LEFT_POLE.w,
+                  index,
+                )}
+                fill="#2f3842"
+                stroke="#8a99a8"
+                strokeWidth="1"
+              />
+            ),
+          )}
+
+          {Array.from(
+            { length: TOOTH_COUNT },
+            (_, index) => (
+              <path
+                key={`right-tooth-${index}`}
+                d={toothPath(
+                  RIGHT_POLE.x,
+                  RIGHT_POLE.w,
+                  index,
+                )}
+                fill="#2f3842"
+                stroke="#8a99a8"
+                strokeWidth="1"
+              />
+            ),
+          )}
+
+          {/* -------------------------------------------------
+           * 06 Yoke
+           * ------------------------------------------------- */}
+
+          <rect
+            x={YOKE.x}
+            y={YOKE.y}
+            width={YOKE.w}
+            height={YOKE.h}
+            fill="url(#mz-steel)"
+            stroke="#6f7f8f"
+            strokeWidth="1"
+          />
+
+          {/* -------------------------------------------------
+           * 02 Ring magnet
+           * ------------------------------------------------- */}
+
           <rect
             x={MAGNET.x}
             y={MAGNET.y}
@@ -135,37 +737,142 @@ export function MzhuAssembly({ className = '' }: MzhuAssemblyProps) {
             stroke="#8794a2"
             strokeWidth="1"
           />
-          <rect x={MAGNET.x} y={MAGNET.y} width={MAGNET.w / 2} height={MAGNET.h} fill="#6f7f8f" fillOpacity="0.08" />
 
-          {/* Magnetic flux */}
-          {loops.map((l, i) => (
+          <rect
+            x={MAGNET.x}
+            y={MAGNET.y}
+            width={MAGNET.w / 2}
+            height={MAGNET.h}
+            fill="#6f7f8f"
+            fillOpacity="0.08"
+          />
+
+          {/* -------------------------------------------------
+           * Magnetic flux
+           * ------------------------------------------------- */}
+
+          {loops.map((loop, index) => (
             <path
-              key={l.top}
-              d={fluxLoop(l.top, l.xr, l.xl, l.depth)}
-              className={i % 2 ? 'flux flux-slow' : 'flux'}
+              key={loop.top}
+              d={fluxLoop(
+                loop.top,
+                loop.xr,
+                loop.xl,
+                loop.depth,
+              )}
+              className={
+                index % 2
+                  ? 'flux flux-slow'
+                  : 'flux'
+              }
               stroke="#3ee0c8"
-              strokeOpacity={0.75 - i * 0.12}
+              strokeOpacity={
+                0.74 - index * 0.11
+              }
               strokeWidth="1.3"
               strokeLinecap="round"
+              fill="none"
             />
           ))}
 
-          {/* 05 Magnetic fluid bridges under each tooth */}
-          {[...leftTeeth, ...rightTeeth].map((c) => (
-            <path key={c} d={fluidPath(c)} fill="url(#mz-fluid)" className="fluid" />
+          {/* -------------------------------------------------
+           * 05 Magnetic fluid
+           * ------------------------------------------------- */}
+
+          {[
+            ...leftTeeth,
+            ...rightTeeth,
+          ].map((center) => (
+            <path
+              key={`fluid-${center}`}
+              d={fluidPath(center)}
+              fill="url(#mz-fluid)"
+              className="fluid"
+            />
           ))}
+
+          {/* -------------------------------------------------
+           * Magnetic flux direction
+           *
+           * Only one representative loop carries arrows.
+           * This avoids a visually overloaded drawing.
+           * ------------------------------------------------- */}
+
+          <g
+            pointerEvents="none"
+            stroke="#3ee0c8"
+            strokeOpacity="0.8"
+            strokeWidth="1.25"
+          >
+            {/* Top — left → right */}
+            <line
+              x1={leftTeeth[4] + 32}
+              y1="158"
+              x2={rightTeeth[1] - 32}
+              y2="158"
+              markerEnd="url(#mz-flux-arrow)"
+            />
+
+            {/* Right side — top → bottom */}
+            <line
+              x1={rightTeeth[1]}
+              y1="194"
+              x2={rightTeeth[1]}
+              y2="236"
+              markerEnd="url(#mz-flux-arrow)"
+            />
+
+            {/* Bottom — right → left */}
+            <line
+              x1={rightTeeth[1] - 30}
+              y1="266"
+              x2={leftTeeth[4] + 30}
+              y2="266"
+              markerEnd="url(#mz-flux-arrow)"
+            />
+
+            {/* Left side — bottom → top */}
+            <line
+              x1={leftTeeth[4]}
+              y1="236"
+              x2={leftTeeth[4]}
+              y2="194"
+              markerEnd="url(#mz-flux-arrow)"
+            />
+          </g>
         </g>
       </defs>
 
-      <ellipse cx="450" cy={AXIS_Y} rx="380" ry="230" fill="url(#mz-glow)" />
+      {/* =======================================================
+       * FIELD GLOW
+       * ======================================================= */}
 
-      {/* 01 Shaft, full bleed to the right */}
+      <ellipse
+        cx={450 + ASSEMBLY_SHIFT_X}
+        cy={AXIS_Y}
+        rx="340"
+        ry="230"
+        fill="url(#mz-glow)"
+      />
+
+      {/* =======================================================
+       * 01 SHAFT
+       * ======================================================= */}
+
       <g mask="url(#mz-shaft-mask)">
-        <rect x="-600" y={SHAFT_TOP} width="2400" height={(AXIS_Y - SHAFT_TOP) * 2} fill="url(#mz-shaft)" />
+        <rect
+          x="-320"
+          y={SHAFT_TOP}
+          width="1700"
+          height={SHAFT_BOTTOM - SHAFT_TOP}
+          fill="url(#mz-shaft)"
+        />
+
+        {/* Shaft centerline */}
         <line
-          x1="-600"
+          x1="-320"
           y1={AXIS_Y}
-          x2="1800"
+          x2="1380"
           y2={AXIS_Y}
           stroke="#e9eef2"
           strokeOpacity="0.35"
@@ -174,28 +881,194 @@ export function MzhuAssembly({ className = '' }: MzhuAssemblyProps) {
         />
       </g>
 
-      <use href="#mz-half" />
-      <use href="#mz-half" transform={`translate(0 ${AXIS_Y * 2}) scale(1 -1)`} />
+      {/* =======================================================
+       * UPPER HALF
+       * ======================================================= */}
 
-      <g fontFamily="IBM Plex Mono, monospace" fontSize="10" fill="#a9b6c3">
-        <text x={MAGNET.x + 14} y={MAGNET.y + 56}>S</text>
-        <text x={MAGNET.x + MAGNET.w - 22} y={MAGNET.y + 56}>N</text>
-        <text x={MAGNET.x + 14} y={AXIS_Y * 2 - MAGNET.y - 50}>S</text>
-        <text x={MAGNET.x + MAGNET.w - 22} y={AXIS_Y * 2 - MAGNET.y - 50}>N</text>
+      <use href="#mz-half" />
+
+      {/* =======================================================
+       * LOWER HALF
+       * ======================================================= */}
+
+      <use
+        href="#mz-half"
+        transform={`translate(0 ${AXIS_Y * 2}) scale(1 -1)`}
+      />
+
+      {/* =======================================================
+       * MAGNET POLARITY
+       * ======================================================= */}
+
+      <g
+        fontFamily="IBM Plex Mono, monospace"
+        fontSize="10"
+        fill="#a9b6c3"
+      >
+        {/* Upper magnet */}
+        <text
+          x={MAGNET.x + 14}
+          y={MAGNET.y + 56}
+        >
+          S
+        </text>
+
+        <text
+          x={MAGNET.x + MAGNET.w - 22}
+          y={MAGNET.y + 56}
+        >
+          N
+        </text>
+
+        {/* Lower magnet */}
+        <text
+          x={MAGNET.x + 14}
+          y={AXIS_Y * 2 - MAGNET.y - 50}
+        >
+          S
+        </text>
+
+        <text
+          x={
+            MAGNET.x +
+            MAGNET.w -
+            22
+          }
+          y={
+            AXIS_Y * 2 -
+            MAGNET.y -
+            50
+          }
+        >
+          N
+        </text>
       </g>
 
-      {/* Position callouts; numbering matches the Construction section */}
-      <g fontFamily="IBM Plex Mono, monospace" fontSize="12" fontWeight="500">
-        {callouts.map((c) => (
-          <g key={c.n}>
-            <line x1={c.x} y1={c.y} x2={c.tx} y2={c.ty + 6} stroke="#a9b6c3" strokeOpacity="0.4" strokeWidth="0.8" />
-            <circle cx={c.x} cy={c.y} r="2.5" fill="#3ee0c8" />
-            <text x={c.tx} y={c.ty} textAnchor="middle" fill="#a9b6c3">
-              {c.n}
+      {/* =======================================================
+       * GAP DIMENSION
+       *
+       * Tooth tip → shaft surface
+       *
+       * ГОСТ-style:
+       *   extension lines
+       *   dimension line
+       *   two arrowheads
+       *   dimension value
+       * ======================================================= */}
+
+      <g
+        fontFamily="IBM Plex Mono, monospace"
+        fontSize="10"
+        fill="#a9b6c3"
+      >
+        {/* Upper extension line */}
+        <line
+          x1={RIGHT_POLE.x + RIGHT_POLE.w - 8}
+          y1={TOOTH_TIP_Y}
+          x2="550"
+          y2={TOOTH_TIP_Y}
+          stroke="#a9b6c3"
+          strokeOpacity="0.65"
+          strokeWidth="0.8"
+        />
+
+        {/* Lower extension line */}
+        <line
+          x1={RIGHT_POLE.x + RIGHT_POLE.w - 8}
+          y1={SHAFT_TOP}
+          x2="520"
+          y2={SHAFT_TOP}
+          stroke="#a9b6c3"
+          strokeOpacity="0.65"
+          strokeWidth="0.8"
+        />
+
+        {/* Vertical dimension line */}
+        <line
+          x1="550"
+          y1={TOOTH_TIP_Y}
+          x2="550"
+          y2={SHAFT_TOP}
+          stroke="#a9b6c3"
+          strokeWidth="0.9"
+          markerStart="url(#mz-dimension-arrow)"
+          markerEnd="url(#mz-dimension-arrow)"
+        />
+
+        {/* Dimension text */}
+        <text
+          x="555"
+          y="249"
+          textAnchor="start"
+          fill="#a9b6c3"
+        >
+          {GAP_VALUE}
+        </text>
+      </g>
+
+      {/* =======================================================
+       * GOST-STYLE CALLOUTS
+       *
+       * Leaders do not cross each other.
+       * Each leader terminates with an arrow at the element.
+       * ======================================================= */}
+
+      <g
+        fontFamily="IBM Plex Mono, monospace"
+        fontSize="10"
+        fontWeight="500"
+        fill="#a9b6c3"
+      >
+        {callouts.map((callout) => (
+          <g key={callout.n}>
+            {/* Main leader */}
+            <polyline
+              points={`
+                ${callout.anchor.x},${callout.anchor.y}
+                ${callout.elbow.x},${callout.elbow.y}
+              `}
+              fill="none"
+              stroke="#a9b6c3"
+              strokeOpacity="0.65"
+              strokeWidth="0.8"
+              markerStart="url(#mz-callout-arrow)"
+            />
+
+            {/* Horizontal shelf */}
+            <line
+              x1={callout.shelf.x1}
+              y1={callout.shelf.y}
+              x2={callout.shelf.x2}
+              y2={callout.shelf.y}
+              stroke="#a9b6c3"
+              strokeOpacity="0.65"
+              strokeWidth="0.8"
+            />
+
+            {/* Shelf connector */}
+            <line
+              x1={callout.elbow.x}
+              y1={callout.elbow.y}
+              x2={callout.shelf.x1}
+              y2={callout.shelf.y}
+              stroke="#a9b6c3"
+              strokeOpacity="0.65"
+              strokeWidth="0.8"
+            />
+
+            {/* Number + label */}
+            <text
+              x={callout.text.x}
+              y={callout.text.y}
+              textAnchor={callout.text.anchor}
+              fill="#a9b6c3"
+            >
+              {callout.n} {callout.label}
             </text>
           </g>
         ))}
       </g>
+
     </svg>
   )
 }

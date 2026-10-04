@@ -34,7 +34,7 @@ export function Hero() {
       </div>
 
       <div
-        className="hero-visual relative h-[72vw] max-h-[460px] min-h-[260px] w-full lg:absolute lg:top-16 lg:right-[-8%] lg:bottom-0 lg:left-[38%] lg:h-auto lg:max-h-none"
+        className="hero-visual relative h-[72vw] max-h-[460px] min-h-[260px] w-full lg:absolute lg:top-16 lg:right-0 lg:bottom-0 lg:left-[35%] lg:h-auto lg:max-h-none"
       >
         <MzhuAssembly className="h-full w-full" />
       </div>
