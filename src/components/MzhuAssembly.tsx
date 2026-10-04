@@ -878,16 +878,45 @@ export function MzhuAssembly({
           fill="url(#mz-shaft)"
         />
 
-        {/* Shaft centerline */}
+        {/* Shaft centerline - stay within magnet bounds */}
         <line
-          x1="-320"
+          x1={MAGNET.x}
           y1={AXIS_Y}
-          x2="1380"
+          x2={MAGNET.x + MAGNET.w}
           y2={AXIS_Y}
           stroke="#e9eef2"
           strokeOpacity="0.35"
           strokeWidth="0.8"
           strokeDasharray="28 6 4 6"
+        />
+      </g>
+
+      {/* Magnetic field direction inside magnets (S → N) */}
+      <g
+        fontFamily="IBM Plex Mono, monospace"
+        fontSize="10"
+        fill="none"
+        stroke="#3ee0c8"
+        strokeOpacity="0.6"
+        strokeWidth="1.2"
+        strokeDasharray="4 3"
+      >
+        {/* Upper magnet field arrow left (S-pole) to right (N-pole) */}
+        <line
+          x1={MAGNET.x + 20}
+          y1={MAGNET.y + 25}
+          x2={MAGNET.x + MAGNET.w - 20}
+          y2={MAGNET.y + 25}
+          markerEnd="url(#mz-flux-arrow)"
+        />
+
+        {/* Lower magnet field arrow left (S-pole) to right (N-pole) */}
+        <line
+          x1={MAGNET.x + 20}
+          y1={AXIS_Y * 2 - MAGNET.y - 25}
+          x2={MAGNET.x + MAGNET.w - 20}
+          y2={AXIS_Y * 2 - MAGNET.y - 25}
+          markerEnd="url(#mz-flux-arrow)"
         />
       </g>
 
