@@ -1,0 +1,401 @@
+@import 'tailwindcss';
+
+/* Design tokens: Tailwind exposes these as CSS variables and utilities (bg-bg, text-accent, font-display...) */
+@theme {
+  --color-bg: #0a0d11;
+  --color-bg-elevated: #10151b;
+  --color-surface: #161c24;
+  --color-steel: #6f7f8f;
+  --color-steel-light: #a9b6c3;
+  --color-text: #e9eef2;
+  --color-muted: #8794a2;
+  --color-accent: #3ee0c8;
+  --color-accent-dim: rgb(62 224 200 / 0.14);
+  --color-line: rgb(169 182 195 / 0.14);
+  --color-danger: #d98a72;
+
+  --font-display: 'Unbounded', 'IBM Plex Sans', sans-serif;
+  --font-body: 'IBM Plex Sans', sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+  --radius-sm: 3px;
+  --radius-md: 6px;
+
+  --text-eyebrow: 0.75rem;
+  --text-h2: clamp(1.6rem, 3.6vw, 2.6rem);
+  --text-metric: clamp(2rem, 4.2vw, 3.1rem);
+}
+
+:root {
+  --space-section: clamp(5rem, 11vw, 8.5rem);
+  --space-gutter: clamp(1.25rem, 4vw, 2.5rem);
+  --max-width: 76rem;
+  --header-h: 4rem;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  color-scheme: dark;
+}
+
+@layer base {
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: var(--header-h);
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--color-text);
+  background:
+    radial-gradient(ellipse 70% 45% at 78% 8%, rgb(62 224 200 / 0.07), transparent 60%),
+    radial-gradient(ellipse 55% 40% at 8% 30%, rgb(111 127 143 / 0.12), transparent 55%),
+    linear-gradient(180deg, #0a0d11 0%, #0f141a 45%, #0a0d11 100%);
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Technical drawing grid */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    linear-gradient(var(--color-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--color-line) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: radial-gradient(ellipse 75% 60% at 60% 25%, black 15%, transparent 75%);
+  opacity: 0.45;
+}
+
+/* Brushed-metal grain */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+#root {
+  position: relative;
+  z-index: 1;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+::selection {
+  background: rgb(62 224 200 / 0.28);
+  color: var(--color-text);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+}
+
+@layer components {
+/* ---------- Layout primitives ---------- */
+
+/* Not named .container to avoid clashing with Tailwind's container utility */
+.wrap {
+  width: min(100% - 2 * var(--space-gutter), var(--max-width));
+  margin-inline: auto;
+}
+
+.section {
+  padding-block: var(--space-section);
+  border-top: 1px solid var(--color-line);
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-eyebrow);
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+.eyebrow::before {
+  content: '';
+  width: 1.75rem;
+  height: 1px;
+  background: currentColor;
+}
+
+.h2 {
+  margin: 1.25rem 0 0;
+  font-size: var(--text-h2);
+  line-height: 1.15;
+  color: var(--color-text);
+}
+
+.lead {
+  margin: 1.25rem 0 0;
+  font-size: clamp(1.05rem, 1.6vw, 1.2rem);
+  line-height: 1.65;
+  color: var(--color-muted);
+}
+
+.num {
+  font-family: var(--font-mono);
+  font-feature-settings: 'tnum' 1;
+}
+
+/* ---------- Buttons ---------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  min-height: 3rem;
+  padding: 0.8rem 1.4rem;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.2;
+  cursor: pointer;
+  transition:
+    background-color 0.2s,
+    border-color 0.2s,
+    color 0.2s,
+    transform 0.2s var(--ease-out);
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn-primary {
+  background: var(--color-accent);
+  color: #04120f;
+  border: 1px solid var(--color-accent);
+}
+
+.btn-primary:hover {
+  background: #6cecd8;
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--color-steel-light);
+  border: 1px solid rgb(169 182 195 / 0.32);
+}
+
+.btn-ghost:hover {
+  color: var(--color-text);
+  border-color: rgb(62 224 200 / 0.6);
+}
+
+/* ---------- Form ---------- */
+
+.field {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.field label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-steel-light);
+}
+
+.field input,
+.field textarea {
+  width: 100%;
+  padding: 0.8rem 0.95rem;
+  border: 1px solid rgb(169 182 195 / 0.2);
+  border-radius: var(--radius-sm);
+  background: rgb(10 13 17 / 0.7);
+  color: var(--color-text);
+  font: inherit;
+  transition:
+    border-color 0.2s,
+    background-color 0.2s;
+}
+
+.field textarea {
+  min-height: 8rem;
+  resize: vertical;
+}
+
+.field input::placeholder,
+.field textarea::placeholder {
+  color: rgb(135 148 162 / 0.6);
+}
+
+.field input:focus,
+.field textarea:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  background: rgb(10 13 17 / 0.95);
+}
+
+.field [aria-invalid='true'] {
+  border-color: var(--color-danger);
+}
+
+.field-error {
+  font-size: 0.8rem;
+  color: var(--color-danger);
+}
+
+}
+
+/* ---------- Motion 1: hero entrance ---------- */
+
+@keyframes hero-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes hero-visual-in {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.hero-animate {
+  animation: hero-in 0.9s var(--ease-out) both;
+}
+
+.hero-visual {
+  animation: hero-visual-in 1.4s var(--ease-out) 0.15s both;
+}
+
+.hero-animate-delay-1 {
+  animation-delay: 0.1s;
+}
+.hero-animate-delay-2 {
+  animation-delay: 0.2s;
+}
+.hero-animate-delay-3 {
+  animation-delay: 0.3s;
+}
+
+/* ---------- Motion 2: magnetic flux flow ---------- */
+
+@keyframes flux-flow {
+  to {
+    stroke-dashoffset: -32;
+  }
+}
+
+.flux {
+  stroke-dasharray: 4 12;
+  animation: flux-flow 1.8s linear infinite;
+}
+
+.flux-slow {
+  animation-duration: 2.6s;
+}
+
+@keyframes fluid-pulse {
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.fluid {
+  animation: fluid-pulse 3.2s ease-in-out infinite;
+}
+
+/* ---------- Motion 3: scroll reveal (Proof) ---------- */
+
+.reveal-child {
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity 0.8s var(--ease-out),
+    transform 0.8s var(--ease-out);
+}
+
+.reveal.is-visible .reveal-child {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal.is-visible .reveal-child:nth-child(2) {
+  transition-delay: 0.08s;
+}
+.reveal.is-visible .reveal-child:nth-child(3) {
+  transition-delay: 0.16s;
+}
+.reveal.is-visible .reveal-child:nth-child(4) {
+  transition-delay: 0.24s;
+}
+.reveal.is-visible .reveal-child:nth-child(5) {
+  transition-delay: 0.32s;
+}
+.reveal.is-visible .reveal-child:nth-child(6) {
+  transition-delay: 0.4s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .hero-animate,
+  .hero-visual,
+  .flux,
+  .fluid {
+    animation: none !important;
+  }
+
+  .reveal-child {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
