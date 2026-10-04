@@ -658,14 +658,28 @@ export function MzhuAssembly({
            * ------------------------------------------------- */}
 
           {[LEFT_POLE, RIGHT_POLE].map((pole) => (
-            <rect
-              key={pole.x}
-              x={pole.x}
-              y="96"
-              width={pole.w}
-              height={TOOTH_BASE_Y - 96}
-              fill="url(#mz-steel)"
-            />
+            <g key={pole.x}>
+              {/* Pole piece base rectangle */}
+              <rect
+                x={pole.x}
+                y="96"
+                width={pole.w}
+                height={TOOTH_BASE_Y - 96}
+                fill="url(#mz-steel)"
+                stroke="#6f7f8f"
+                strokeWidth="1"
+              />
+              
+              {/* Remove stroke at tooth base where teeth contact magnet */}
+              <rect
+                x={pole.x}
+                y={TOOTH_BASE_Y - 1}
+                width={pole.w}
+                height="3"
+                fill="url(#mz-steel)"
+                stroke="none"
+              />
+            </g>
           ))}
 
           {/* -------------------------------------------------
