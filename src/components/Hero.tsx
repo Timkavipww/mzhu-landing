@@ -22,10 +22,10 @@ export function Hero() {
             Магнитная жидкость держит давление в зазоре 0,1&nbsp;мм, пока классическая манжета трёт вал и стареет.
           </p>
           <div className="hero-animate hero-animate-delay-3 mt-9 flex flex-col gap-3 sm:flex-row">
-            <a href="#contact" className="btn btn-primary">
+            {/* <a href="#contact" className="btn btn-primary">
               Запросить расчёт
               <span aria-hidden="true">→</span>
-            </a>
+            </a> */}
             <a href="#proof" className="btn btn-ghost">
               Смотреть характеристики
             </a>

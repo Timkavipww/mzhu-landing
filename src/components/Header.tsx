@@ -9,8 +9,8 @@ const nav = [
 export function Header() {
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-line bg-bg/75 backdrop-blur-md">
-      <div className="wrap flex h-16 items-center justify-between gap-6">
-        <a href="#top" className="flex items-center gap-3" aria-label="МЖУ — на главную">
+      <div className="wrap flex h-16 items-center justify-center gap-6">
+        <a href="#top" className="flex items-center gap-3 absolute left-40" aria-label="МЖУ — на главную">
           <svg width="22" height="22" viewBox="0 0 32 32" fill="none" aria-hidden="true">
             <circle cx="16" cy="16" r="12" stroke="#3ee0c8" strokeWidth="1.5" />
             <circle cx="16" cy="16" r="5" fill="#a9b6c3" />
@@ -25,10 +25,6 @@ export function Header() {
             </a>
           ))}
         </nav>
-
-        <a href="#contact" className="btn btn-primary min-h-0 px-4 py-2 text-sm">
-          Запросить расчёт
-        </a>
       </div>
     </header>
   )
